@@ -1,6 +1,8 @@
 package frc.robot.commands;
 // Copyright (c) FIRST and other WPILib contributors.
 
+import static frc.robot.Util.logf;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -10,12 +12,10 @@ import edu.wpi.first.wpilibj.RobotController;
 // the WPILib BSD license file in the root directory of this project.
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.PoseSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import static frc.robot.Util.logf;
 
 public class ShootCommand extends Command {
     IndexerSubsystem indexer;
@@ -84,7 +84,7 @@ public class ShootCommand extends Command {
     @Override
     public void execute() {
         if (state != lastState) {
-            long elapsedTime = RobotController.getFPGATime() - startTime;
+            //long elapsedTime = RobotController.getFPGATime() - startTime;
             //logf("ShootCommand new state:%s elapsed:%.2f\n", state, elapsedTime / 1000000.0);
         }
         if (state == State.WAIT_SHOOT_SPEED) {

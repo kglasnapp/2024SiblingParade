@@ -1,11 +1,9 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import static frc.robot.Util.logf;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.PoseSubsystem;
-import static frc.robot.Util.logf;
 
 public class ResetOdometryWithCameraCommand extends Command {
 

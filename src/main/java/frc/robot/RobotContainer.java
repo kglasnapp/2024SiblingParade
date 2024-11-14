@@ -29,22 +29,30 @@ package frc.robot;
 
 import static frc.robot.Util.logf;
 
-import java.util.Set;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.AimTiltToSpeaker;
+import frc.robot.commands.AmpShotCommand;
+import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.DriveToObjectCommand;
+import frc.robot.commands.IndexCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeNoteCommand;
+import frc.robot.commands.ResetOdometryWithCameraCommand;
+import frc.robot.commands.ShootCommand;
+import frc.robot.commands.SpeakerAlligningCommand;
+import frc.robot.commands.TiltHomeCommand;
+import frc.robot.commands.TiltManualCommand;
+import frc.robot.commands.TiltSetAngleCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.DrivetrainPWM;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -52,7 +60,6 @@ import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.PoseSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TiltSubsystem;
-import frc.robot.commands.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -71,6 +78,7 @@ public class RobotContainer {
   // private final LimeLightPose limeLightPose = new LimeLightPose();
   public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
+  public DrivetrainPWM drivePWM;
   public final LedSubsystem leds = new LedSubsystem();
   public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   public final IndexerSubsystem indexerSubsystem = new IndexerSubsystem(leds);
@@ -83,6 +91,8 @@ public class RobotContainer {
   public final static CommandXboxController operatorController = new CommandXboxController(3);
   public final static XboxController operatorHID = operatorController.getHID();
   public final static XboxController driveHID = driveController.getHID();
+
+  public final static boolean ParadeMode = true;
 
   // Rate limit is in meters/per second/per second (acceleration)
   // Formula: MAX_SPEED / TIME_TO_ACCELERATE
@@ -110,23 +120,37 @@ public class RobotContainer {
 
     instance = this;
     logf("Creating RobotContainer\n");
-
-    // Controller inputs range from -1.0 -> 1.0
-    // Drive train operates in meters per second
-    // modifyAxis: deadband compensation
-    drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-        drivetrainSubsystem,
-        () -> sLY.calculate(-modifyAxis(driveController.getLeftY())
-            * Constants.MAX_VELOCITY_METERS_PER_SECOND),
-        () -> sLX.calculate(-modifyAxis(driveController.getLeftX())
-            * Constants.MAX_VELOCITY_METERS_PER_SECOND),
-        () -> sRX.calculate(-modifyAxis(driveController.getRightX())
-            * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND),
-        // Set precision based upon left bumper
-        driveController.leftBumper(),
-        // Set robot oriented control based upon left bumper
-        driveController.rightBumper()));
-
+    if (RobotContainer.ParadeMode) {
+      drivePWM = new DrivetrainPWM(driveHID);
+      drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+          drivetrainSubsystem,
+          () -> sLY.calculate(-modifyAxis(0)
+              * Constants.MAX_VELOCITY_METERS_PER_SECOND),
+          () -> sLX.calculate(-modifyAxis(0)
+              * Constants.MAX_VELOCITY_METERS_PER_SECOND),
+          () -> sRX.calculate(-modifyAxis(0)
+              * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND),
+          // Set precision based upon left bumper
+          driveController.leftBumper(),
+          // Set robot oriented control based upon left bumper
+          driveController.rightBumper()));
+    } else {
+      // Controller inputs range from -1.0 -> 1.0
+      // Drive train operates in meters per second
+      // modifyAxis: deadband compensation
+      drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+          drivetrainSubsystem,
+          () -> sLY.calculate(-modifyAxis(driveController.getLeftY())
+              * Constants.MAX_VELOCITY_METERS_PER_SECOND),
+          () -> sLX.calculate(-modifyAxis(driveController.getLeftX())
+              * Constants.MAX_VELOCITY_METERS_PER_SECOND),
+          () -> sRX.calculate(-modifyAxis(driveController.getRightX())
+              * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND),
+          // Set precision based upon left bumper
+          driveController.leftBumper(),
+          // Set robot oriented control based upon left bumper
+          driveController.rightBumper()));
+    }
     configureButtonBindings();
     configureDashboard();
   }

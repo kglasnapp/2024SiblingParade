@@ -6,7 +6,6 @@ import static frc.robot.utilities.Util.logf;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 

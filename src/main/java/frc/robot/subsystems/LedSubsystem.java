@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import static frc.robot.Util.logf;
 
-import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -55,7 +54,7 @@ public class LedSubsystem extends SubsystemBase {
     }
 
     private void initNeoPixel() {
-        m_led = new AddressableLED(9);
+        m_led = new AddressableLED(7);
         // Length is expensive to set, so only set it once, then just update data
         m_ledBuffer = new AddressableLEDBuffer(144);
         m_led.setLength(m_ledBuffer.getLength());

@@ -13,16 +13,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.AimTiltToSpeaker;
 import frc.robot.commands.AutoIntakeNoteCommand;
 import frc.robot.commands.AutoShootWithAngleCommand;
-import frc.robot.commands.IntakeNoteCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.SpeakerAlligningCommand;
-import frc.robot.commands.TiltHomeCommand;
 import frc.robot.commands.TiltSetAngleCommand;
 
 public class Autonomous {

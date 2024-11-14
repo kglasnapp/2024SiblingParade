@@ -24,6 +24,7 @@ import frc.robot.utilities.SwerveModule;
 import frc.robot.utilities.SwerveModuleIds;
 import frc.robot.utilities.SwerveModuleType;
 import static frc.robot.utilities.Util.round2;
+
 public class DrivetrainSubsystem extends SubsystemBase {
 
   // The maximum voltage that will be delivered to the drive motors.
@@ -63,22 +64,31 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public DrivetrainSubsystem(RobotContainer robotContainer) {
     this.robotContainer = robotContainer;
+    // if (RobotContainer.ParadeMode) {
+    //   // Code for Sibling Parade Mode
+      
+    //   m_frontLeftModule = null;
+    //   m_frontRightModule = null;
+    //   m_backLeftModule = null;
+    //   m_backRightModule = null;
+    // } else {
+      m_frontLeftModule = new SwerveModule(0, SwerveModuleType.Mk4iL2, new SwerveModuleIds(
+          FRONT_LEFT_MODULE_DRIVE_MOTOR, FRONT_LEFT_MODULE_STEER_MOTOR, FRONT_LEFT_MODULE_STEER_ENCODER));
 
-    m_frontLeftModule = new SwerveModule(0, SwerveModuleType.Mk4iL2, new SwerveModuleIds(
-        FRONT_LEFT_MODULE_DRIVE_MOTOR, FRONT_LEFT_MODULE_STEER_MOTOR, FRONT_LEFT_MODULE_STEER_ENCODER));
+      m_frontRightModule = new SwerveModule(1, SwerveModuleType.Mk4iL2, new SwerveModuleIds(
+          FRONT_RIGHT_MODULE_DRIVE_MOTOR, FRONT_RIGHT_MODULE_STEER_MOTOR, FRONT_RIGHT_MODULE_STEER_ENCODER));
 
-    m_frontRightModule = new SwerveModule(1, SwerveModuleType.Mk4iL2, new SwerveModuleIds(
-        FRONT_RIGHT_MODULE_DRIVE_MOTOR, FRONT_RIGHT_MODULE_STEER_MOTOR, FRONT_RIGHT_MODULE_STEER_ENCODER));
+      m_backLeftModule = new SwerveModule(2, SwerveModuleType.Mk4nL2, new SwerveModuleIds(
+          BACK_LEFT_MODULE_DRIVE_MOTOR, BACK_LEFT_MODULE_STEER_MOTOR, BACK_LEFT_MODULE_STEER_ENCODER));
 
-    m_backLeftModule = new SwerveModule(2, SwerveModuleType.Mk4nL2, new SwerveModuleIds(
-        BACK_LEFT_MODULE_DRIVE_MOTOR, BACK_LEFT_MODULE_STEER_MOTOR, BACK_LEFT_MODULE_STEER_ENCODER));
+      m_backRightModule = new SwerveModule(3, SwerveModuleType.Mk4nL2, new SwerveModuleIds(
+          BACK_RIGHT_MODULE_DRIVE_MOTOR, BACK_RIGHT_MODULE_STEER_MOTOR, BACK_RIGHT_MODULE_STEER_ENCODER));
 
-    m_backRightModule = new SwerveModule(3, SwerveModuleType.Mk4nL2, new SwerveModuleIds(
-        BACK_RIGHT_MODULE_DRIVE_MOTOR, BACK_RIGHT_MODULE_STEER_MOTOR, BACK_RIGHT_MODULE_STEER_ENCODER));
+      swerveModules = new SwerveModule[] {
+          m_frontLeftModule, m_frontRightModule, m_backLeftModule, m_backRightModule
+      };
 
-    swerveModules = new SwerveModule[] {
-        m_frontLeftModule, m_frontRightModule, m_backLeftModule, m_backRightModule
-    };
+   // }
   }
 
   /**
@@ -195,7 +205,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     double frP = m_frontRightModule.getPosition();
     double blP = m_backLeftModule.getPosition();
     double brP = m_backRightModule.getPosition();
-    if(Robot.count % 20 == -1){
+    if (Robot.count % 20 == -1) {
       SmartDashboard.putNumber("flP", round2(flP));
       SmartDashboard.putNumber("frP", round2(frP));
       SmartDashboard.putNumber("blP", round2(blP));

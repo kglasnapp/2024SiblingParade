@@ -1,7 +1,5 @@
 package frc.robot.utilities;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-
 public class SwerveModuleIds {
   public final int driveMotorID;
   public final int angleMotorID;

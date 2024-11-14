@@ -8,7 +8,6 @@ import static frc.robot.utilities.Util.logf;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TiltSubsystem;
-import frc.robot.subsystems.TiltSubsystem.State;
 
 public class TiltManualCommand extends Command {
     TiltSubsystem tiltSubsystem;
