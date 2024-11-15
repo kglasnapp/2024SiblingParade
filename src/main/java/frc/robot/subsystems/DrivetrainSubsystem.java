@@ -149,7 +149,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
-    m_chassisSpeeds = chassisSpeeds;
+    if (!RobotContainer.PARADE_MODE) {
+      m_chassisSpeeds = chassisSpeeds;
+    } else {
+      stop();
+    }
   }
 
   // Read the absolute values from the cancoder

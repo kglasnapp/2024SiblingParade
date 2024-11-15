@@ -34,6 +34,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -92,7 +93,7 @@ public class RobotContainer {
   public final static XboxController operatorHID = operatorController.getHID();
   public final static XboxController driveHID = driveController.getHID();
 
-  public final static boolean ParadeMode = true;
+  public final static boolean PARADE_MODE = true;
 
   // Rate limit is in meters/per second/per second (acceleration)
   // Formula: MAX_SPEED / TIME_TO_ACCELERATE
@@ -120,16 +121,13 @@ public class RobotContainer {
 
     instance = this;
     logf("Creating RobotContainer\n");
-    if (RobotContainer.ParadeMode) {
+    if (RobotContainer.PARADE_MODE) {
       drivePWM = new DrivetrainPWM(driveHID);
       drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
           drivetrainSubsystem,
-          () -> sLY.calculate(-modifyAxis(0)
-              * Constants.MAX_VELOCITY_METERS_PER_SECOND),
-          () -> sLX.calculate(-modifyAxis(0)
-              * Constants.MAX_VELOCITY_METERS_PER_SECOND),
-          () -> sRX.calculate(-modifyAxis(0)
-              * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND),
+          () -> 0,
+          () -> 0,
+          () -> 0,
           // Set precision based upon left bumper
           driveController.leftBumper(),
           // Set robot oriented control based upon left bumper
@@ -208,10 +206,12 @@ public class RobotContainer {
 
     configureDriverController(driveController);
     // calibrateShooter(driveController);
-    try {
-      configureOperatorController(operatorController);
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (!PARADE_MODE) {
+      try {
+        configureOperatorController(operatorController);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -283,7 +283,6 @@ public class RobotContainer {
         drivetrainSubsystem.zeroGyroscope();
       }
     }));
-    driverController.start().onTrue(new ResetOdometryWithCameraCommand(poseSubsystem));
     driverController.x().onTrue(
         new IntakeNoteCommand(intakeSubsystem, indexerSubsystem, leds));
     driverController.y().onTrue(
@@ -294,11 +293,38 @@ public class RobotContainer {
     // indexerSubsystem, intakeSubsystem));
     driverController.b().onTrue(new AmpShotCommand(shooterSubsystem, indexerSubsystem));
 
-    driverController.povRight()
-        .whileTrue(Commands
-            .parallel(new AimTiltToSpeaker(tiltSubsystem, poseSubsystem, false),
-                new SpeakerAlligningCommand(poseSubsystem, drivetrainSubsystem))
-            .andThen(new ShootCommand(shooterSubsystem, indexerSubsystem, poseSubsystem, 0.90)));
+    if (PARADE_MODE) {
+      driverController.start().onTrue(new TiltHomeCommand(tiltSubsystem));
+      driverController.povRight().whileTrue(new TiltSetAngleCommand(tiltSubsystem, 30.5));
+      driverController.povLeft().whileTrue(new TiltSetAngleCommand(tiltSubsystem, 55.0));
+      driverController.povUp().onTrue(new TiltManualCommand(tiltSubsystem, true)); // Send shooter up
+      driverController.povDown().onTrue(new TiltManualCommand(tiltSubsystem, false)); // Send shooter down
+
+      driverController.leftBumper().whileTrue(new IndexCommand(indexerSubsystem));
+      driverController.rightBumper().whileTrue(new IntakeCommand(intakeSubsystem, indexerSubsystem, leds));
+
+      // Fast mode
+      driverController.rightTrigger().whileTrue(Commands.startEnd(() -> {
+        drivePWM.speedRatio = 1.0;
+      }, () -> {
+        drivePWM.speedRatio = 0.5;
+      }));
+
+      // Straight mode
+      driverController.leftTrigger().whileTrue(Commands.startEnd(() -> {
+        drivePWM.straightMode = true;
+      }, () -> {
+        drivePWM.straightMode = false;
+      }));
+    } else {
+      driverController.start().onTrue(new ResetOdometryWithCameraCommand(poseSubsystem));
+
+      driverController.povRight()
+          .whileTrue(Commands
+              .parallel(new AimTiltToSpeaker(tiltSubsystem, poseSubsystem, false),
+                  new SpeakerAlligningCommand(poseSubsystem, drivetrainSubsystem))
+              .andThen(new ShootCommand(shooterSubsystem, indexerSubsystem, poseSubsystem, 0.90)));
+    }
     // driverController.povDown().onTrue(new StopAllCommand(shooterSubsystem,
     // indexerSubsystem, intakeSubsystem));
     // driveController.rightTrigger().onTrue(
