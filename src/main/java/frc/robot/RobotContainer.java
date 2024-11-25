@@ -286,9 +286,9 @@ public class RobotContainer {
     driverController.x().onTrue(
         new IntakeNoteCommand(intakeSubsystem, indexerSubsystem, leds));
     driverController.y().onTrue(
-        new ShootCommand(shooterSubsystem, indexerSubsystem, poseSubsystem, 1));
-    driverController.a().onTrue(
         new ShootCommand(shooterSubsystem, indexerSubsystem, poseSubsystem, 0.8));
+    driverController.a().onTrue(
+        new ShootCommand(shooterSubsystem, indexerSubsystem, poseSubsystem, 0.55));
     // driverController.a().onTrue(new StopAllCommand(shooterSubsystem,
     // indexerSubsystem, intakeSubsystem));
     driverController.b().onTrue(new AmpShotCommand(shooterSubsystem, indexerSubsystem));

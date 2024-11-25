@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.PDHData;
+import frc.robot.subsystems.YawProvider;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -32,6 +33,8 @@ public class Robot extends TimedRobot {
   public static int count = 0;
   private final PDHData pdhData = new PDHData();
   public static Optional<Alliance> alliance;
+  public static YawProvider yawNavX;
+  public static double yaw;
 
   Command cmd;
   public RobotContainer robotContainer;
@@ -47,6 +50,7 @@ public class Robot extends TimedRobot {
     alliance = DriverStation.getAlliance();
     pdhData.clearStickyFaults();
     Util.logf("Start Sibling %s\n", alliance.toString());
+    yawNavX = new YawProvider();
 
   }
 
@@ -67,6 +71,8 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods. This must be called from the
     // robot's periodic block in order for
     // anything in the Command-based framework to work.
+    // Get the current robot yaw
+    yaw = yawNavX.yaw();
     CommandScheduler.getInstance().run();
     count++;
     if (count % 500 == 0) {
